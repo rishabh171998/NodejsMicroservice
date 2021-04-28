@@ -9,7 +9,8 @@
     "ipfs": "^0.54.4",
     "ipfs-cluster-api": "^0.0.9",
     "ipfs-http-client": "^49.0.4",
-    "mongoose": "^5.12.6"
+    "mongoose": "^5.12.6",
+    "morgan": "^1.10.0"
   },
   "name": "distrybute",
   "description": "",
