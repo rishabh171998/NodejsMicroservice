@@ -1,12 +1,14 @@
-const {Cred}=require('../models/db')
+const {Cred}=require('../model/database');
 const bcrypt =require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const validator=require('../utils/validateDB');
 const uuid=require('uuid');
+
 module.exports.register=async (req,res,next)=>
 {
     const email=req.body.email;
-    const password=req.body.password
+    const password=req.body.password;
+    console.log(email);
     if(!email||!password)
     {
         next(new Error("Invalid Parameters"));
@@ -33,6 +35,7 @@ module.exports.register=async (req,res,next)=>
    )
    try{
        const credSaved=await cred.save()
+       res.status(200).send(credSaved);
    }catch(err)
    {
   res.status(400).send(err);
