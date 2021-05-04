@@ -3,14 +3,21 @@ const mongoose=require('mongoose')
 const cors =require('cors');
 const app=express();
 const dotenv=require('dotenv');
+//const register=require('./routes/register');
+//const login=require('./routes/login')
 dotenv.config();
+const PORT=process.env.PORT
+const URI=process.env.URI
+const API_VERSION=process.env.API_VERSION;
 app.use(express.json());
-mongoose.connect("mongodb+srv://rishabh:rish123@cluster0.ohd1b.mongodb.net/distrybute?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(URI, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("DB CONNECTED")
 });
-app.listen('3000',()=>{
-    console.log(`Running on http://localhost`)
+//app.use(`/v${API_VERSION}/api/register`,register)
+//app.use(`/v${process.env.API_VERSION}/api/login`,login)
+app.listen(PORT,()=>{
+    console.log(`Running on http://localhost:`+`${process.env.PORT}`)
 })
