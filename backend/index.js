@@ -4,7 +4,7 @@ const cors =require('cors');
 const app=express();
 const dotenv=require('dotenv');
 const register=require('./routes/register');
-//const login=require('./routes/login')
+const login=require('./routes/login')
 dotenv.config();
 const PORT=process.env.PORT
 const URI=process.env.URI
@@ -17,7 +17,7 @@ db.once('open', function() {
   console.log("DB CONNECTED")
 });
 app.use(`/v${API_VERSION}/api/register`,register)
-//app.use(`/v${process.env.API_VERSION}/api/login`,login)
+app.use(`/v${process.env.API_VERSION}/api/login`,login)
 app.listen(PORT,()=>{
     console.log(`Running on http://localhost:`+`${process.env.PORT}`)
 })
