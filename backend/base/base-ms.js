@@ -2,6 +2,7 @@ const express=require('express');
 const bodyParser=require('body-parser');
 const cors=require('cors');
 const {validationResult}=require('express-validator')
+const dotenv=require('dotenv')
 /**
  * @type {Express App}
  * @type {Number}
@@ -18,6 +19,7 @@ class ExpressApp
         this.express;
         this.app=app;
         this.router=router;
+        this.env=dotenv
     }
     run()
     {
@@ -35,6 +37,7 @@ class ExpressApp
             method.call(this,req,res).then(result=>
                 {
                     res.status(result.status).send(result.content);
+
                 }).catch(err=>{
                         console.log(err);
                         })
@@ -66,7 +69,7 @@ class ExpressApp
             app = this.app;
             app.use(bodyParser.json({}));
             app.use(cors());
-
+            this.env.config();
             // app.use(this.verifyJwt());
             this.registerRoutes();
             app.use('/', router); // Mount The Middleware at path '/'   

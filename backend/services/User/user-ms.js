@@ -34,17 +34,19 @@ class UserService extends ExpressApp
             const user=await this.db.collection(COLLECTION_NAME).findOne({"cred_id.email":email});
             console.log(user)
             if(!user) {
-                return await createErrorResponse(404,'user.not.found','User Not Found');
+                console.log("entered 5")
+                return await createErrorResponse(404,'user.not.found',"User Not Found");
             }
+
             return {
                 status: 200,
                 content: user
             }
         }catch(err) {
+            console.log("entered 4")
             return await createErrorResponse(500,'error.finding.user','Error Finding User');
         }
     }  
-
     async addNewUser(req) 
     {
           const {email,password,first_name,last_name}=req.body;
@@ -52,7 +54,8 @@ class UserService extends ExpressApp
             const EmailExist=await this.db.collection(COLLECTION_NAME).findOne({"cred_id.email":email});
            if(EmailExist)
            {
-               return await createErrorResponse(409,'user.email.exists',"Email Already Exists");
+            console.log("entered 3")
+           return await createErrorResponse(404,'dddf',"Email Already Exists");
            }
            const salt=await bcrypt.genSalt(10)
            const hashPassword=await bcrypt.hash(password,salt);
@@ -69,17 +72,18 @@ class UserService extends ExpressApp
            let insertRes = await this.db.collection(COLLECTION_NAME).insertOne(doc);
            if(!insertRes)
            {
+            console.log("entered 1")
                return await createErrorResponse(500,'error.in.regitering',"Error in Registering");
            }
-
-           doc.id=insertRes._id;
+           console.log(doc)
            delete doc.cred_id.password;
-           return {
+           return{
                status:200,
                content:doc
            }
           }catch(err)
           {
+            console.log("entered 2")
             return await createErrorResponse(500,'error.creating.user','Error Creating User');
           }
     }

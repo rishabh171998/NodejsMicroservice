@@ -3,7 +3,9 @@ const {ExpressApp}=require('../../base/base-ms');
 const {createErrorResponse } = require('../../utils/error-util');
 const {comparePassword}=require('./auth-util');
 const {userUtil}=require('./auth-util');
+const {createToken} = require('../../middleware/token');
 const asMain=(require.main===module)
+
 
 class AuthApp extends ExpressApp{
     constructor(context)
@@ -11,7 +13,6 @@ class AuthApp extends ExpressApp{
         super(context);
         this.options=context
     }
-
     registerRoutes()
     {
         super.registerRoutes();
@@ -24,38 +25,59 @@ class AuthApp extends ExpressApp{
         console.log(doc)
         try {
             const user = await userUtil('http://localhost:3002','/user/getUser','GET',doc);
-            console.log(user.body);
-
-            if(!user.body) {
+    
+          
+            if(!user) {
+                console.log("entered 6")
                 return await createErrorResponse(401,'user.not.active',"Email Not Verified")
             }
+            console.log(user.body);
+            console.log(user.statusCode)
             const isValidPassword = await comparePassword(doc.password, user.body.cred_id.password);
             if(!isValidPassword) {
+                console.log("entered 7")
+                
                 return await createErrorResponse(500,'password.not.authenticated',"Password Not Authenticated")
             }
             delete user.body.cred_id.password;
+            const token=await createToken(user.body._id);
             return {
                 status: 200,
-                content:user
+                content:
+                {
+                    token,
+                    ...user.body
+                }
             }
         }catch(err) {
-            return await createErrorResponse(err.statusCode, err.message);
+            console.log("entered 9")
+            console.log(err)
+            return await createErrorResponse(400,"ddd" ,"edsds");
         }
     }
     async handleRegister(req)
     {
-       let doc=req.body;
-           const response =await userUtil('http://localhost:3002','/user/insertUser','POST',doc);
-           if(response.status===200)
-           return {
-            status: 200,
-            content: response.body
+        let doc = req.body;
+        const response = await userUtil('http://localhost:3002','/user/insertUser','POST',doc)
+        if(!response)
+        {
+            console.log("entered 11");
+            return await createErrorResponse(401,'ddd',"Email Already")
         }
-   return {
-       status: response.statusCode,
-       content: response.body
-   }    
-}
+        console.log(response.statusCode)
+        if(response.statusCode== 200) {
+            console.log("entered 8")
+             return {
+                 status: 200,
+                 content: response.body
+             }
+        }
+        console.log("entered 10")
+        return {
+            status: response.statusCode,
+            content: response.error
+        }
+    }
 }
 if(asMain) {
     let context = {
