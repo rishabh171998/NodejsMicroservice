@@ -5,8 +5,6 @@ const {comparePassword}=require('./auth-util');
 const {userUtil}=require('./auth-util');
 const {createToken} = require('../../middleware/token');
 const asMain=(require.main===module)
-
-
 class AuthApp extends ExpressApp{
     constructor(context)
     {
@@ -25,10 +23,9 @@ class AuthApp extends ExpressApp{
         console.log(doc)
         try {
             const user = await userUtil('http://localhost:3002','/user/getUser','GET',doc);
-    
-          
             if(!user) {
                 console.log("entered 6")
+                console.log(user.errorode)
                 return await createErrorResponse(401,'user.not.active',"Email Not Verified")
             }
             console.log(user.body);
@@ -36,7 +33,6 @@ class AuthApp extends ExpressApp{
             const isValidPassword = await comparePassword(doc.password, user.body.cred_id.password);
             if(!isValidPassword) {
                 console.log("entered 7")
-                
                 return await createErrorResponse(500,'password.not.authenticated',"Password Not Authenticated")
             }
             delete user.body.cred_id.password;
@@ -49,7 +45,7 @@ class AuthApp extends ExpressApp{
                     ...user.body
                 }
             }
-        }catch(err) {
+        }catch(err){
             console.log("entered 9")
             console.log(err)
             return await createErrorResponse(400,"ddd" ,"edsds");
